@@ -25,10 +25,10 @@ Adafruit_9DOF dof = Adafruit_9DOF();
 #include <Adafruit_L3GD20_U.h>
 Adafruit_L3GD20_Unified gyro = Adafruit_L3GD20_Unified(20);
 float Gx_scale = 1.;
-float Gy_scale = 1.;
+float Gy_scale = 0.9973;
 float Gz_scale = 1.;
 float Gx_offset = 0.;
-float Gy_offset = 0.1527;
+float Gy_offset = 0.1028;
 float Gz_offset = 0.;
 float Gx, Gy, Gz;
 
@@ -58,7 +58,7 @@ float Mxy_scale = 0.;
 float Mxz_scale = 0.;
 float Myz_scale = 0.;
 float Bx, By, Bz, Mx, My, Mz;
-
+float convert_mag = 1.; //Needed to convert to known unit
 
 void setup() {
   Serial.begin(9600);
@@ -153,9 +153,9 @@ void loop() {
   Bx = mag_event.magnetic.x - Mx_offset;
   By = mag_event.magnetic.y - My_offset;
   Bz = mag_event.magnetic.z - Mz_offset;
-  Mx = Bx * Mx_scale + By * Mxy_scale + Bz * Mxz_scale;
-  My = Bx * Mxy_scale + By * My_scale + Bz * Myz_scale;
-  Mz = Bx * Mxz_scale + By * Myz_scale + Bz * Mz_scale;
+  Mx = ( Bx * Mx_scale + By * Mxy_scale + Bz * Mxz_scale ) * convert_mag;
+  My = ( Bx * Mxy_scale + By * My_scale + Bz * Myz_scale ) * convert_mag;
+  Mz = ( Bx * Mxz_scale + By * Myz_scale + Bz * Mz_scale ) * convert_mag;
   
   
 
